@@ -1,0 +1,183 @@
+   1               		.file	"main.c"
+   2               	__SP_H__ = 0x3e
+   3               	__SP_L__ = 0x3d
+   4               	__SREG__ = 0x3f
+   5               	__tmp_reg__ = 0
+   6               	__zero_reg__ = 1
+   7               		.text
+   8               	.Ltext0:
+   9               	.global	USART_vInit
+  11               	USART_vInit:
+  12               	.LFB1:
+  13               		.file 1 "main.c"
+   1:main.c        **** #include <avr/io.h>
+   2:main.c        **** #include <stdio.h>
+   3:main.c        **** 
+   4:main.c        **** void USART_vInit(void){
+  14               		.loc 1 4 0
+  15               	/* prologue: function */
+  16               	/* frame size = 0 */
+  17               	/* stack size = 0 */
+  18               	.L__stack_usage = 0
+   5:main.c        **** 
+   6:main.c        ****     //set baud rate
+   7:main.c        ****     //UBRRH = (unsigned char)(103>>8);
+   8:main.c        ****     //UBRRL = (unsigned char) 103;
+   9:main.c        ****     UBRRH = (unsigned char)(25 >>8);
+  19               		.loc 1 9 0
+  20 0000 10BC      		out 0x20,__zero_reg__
+  10:main.c        ****     UBRRL = (unsigned char) 25;
+  21               		.loc 1 10 0
+  22 0002 89E1      		ldi r24,lo8(25)
+  23 0004 89B9      		out 0x9,r24
+  11:main.c        **** 
+  12:main.c        ****     // enable receiver and transmitter
+  13:main.c        ****     UCSRB = (1<<RXEN) | (1<<TXEN);
+  24               		.loc 1 13 0
+  25 0006 88E1      		ldi r24,lo8(24)
+  26 0008 8AB9      		out 0xa,r24
+  14:main.c        ****     
+  15:main.c        ****     // Set frame format to 8 data bits, no parity, 1 stop bit
+  16:main.c        ****     UCSRC = (1<<URSEL) | (0<<UCSZ1) | (1<<UCSZ0) | (0<<USBS);
+  27               		.loc 1 16 0
+  28 000a 82E8      		ldi r24,lo8(-126)
+  29 000c 80BD      		out 0x20,r24
+  30 000e 0895      		ret
+  31               	.LFE1:
+  33               	.global	USART_Transmit
+  35               	USART_Transmit:
+  36               	.LFB2:
+  17:main.c        ****     //UCSRC = (1<<URSEL) | (3<<UCSZ0) | (1<<USBS);
+  18:main.c        **** }
+  19:main.c        **** 
+  20:main.c        **** void USART_Transmit (unsigned int data)
+  21:main.c        **** {
+  37               		.loc 1 21 0
+  38               	/* prologue: function */
+  39               	/* frame size = 0 */
+  40               	/* stack size = 0 */
+  41               	.L__stack_usage = 0
+  42               	.LVL0:
+  43               	.L3:
+  22:main.c        ****     //Wait until the Transmitter is ready
+  23:main.c        ****     while (! (UCSRA & (1 << UDRE)) ); 
+  44               		.loc 1 23 0 discriminator 1
+  45 0010 5D9B      		sbis 0xb,5
+  46 0012 00C0      		rjmp .L3
+  24:main.c        ****     
+  25:main.c        ****     //Make the 9th bit 0 for the moment
+  26:main.c        ****     UCSRB &=~(1 << TXB8); 
+  47               		.loc 1 26 0
+  48 0014 5098      		cbi 0xa,0
+  27:main.c        ****     
+  28:main.c        ****     //If the 9th bit of the data is a 1
+  29:main.c        ****     if (data & 0x0100) 
+  49               		.loc 1 29 0
+  50 0016 90FD      		sbrc r25,0
+  30:main.c        ****     
+  31:main.c        ****     //Set the TXB8 bit to 1
+  32:main.c        ****     UCSRB |= (1 << TXB8); 
+  51               		.loc 1 32 0
+  52 0018 509A      		sbi 0xa,0
+  53               	.L4:
+  33:main.c        ****     
+  34:main.c        ****     //Get that data outa here!
+  35:main.c        ****     UDR = data;
+  54               		.loc 1 35 0
+  55 001a 8CB9      		out 0xc,r24
+  56 001c 0895      		ret
+  57               	.LFE2:
+  59               	.global	USART_Receive
+  61               	USART_Receive:
+  62               	.LFB3:
+  36:main.c        ****     }
+  37:main.c        **** 
+  38:main.c        **** unsigned char USART_Receive( void )
+  39:main.c        **** {
+  63               		.loc 1 39 0
+  64               	/* prologue: function */
+  65               	/* frame size = 0 */
+  66               	/* stack size = 0 */
+  67               	.L__stack_usage = 0
+  68               	.L13:
+  40:main.c        ****     while ( !(UCSRA & (1 << RXC)) ); //Wait for the RXC to not have 0
+  69               		.loc 1 40 0 discriminator 1
+  70 001e 5F9B      		sbis 0xb,7
+  71 0020 00C0      		rjmp .L13
+  41:main.c        ****     return UDR; //Get that data outa there and back to the main program!
+  72               		.loc 1 41 0
+  73 0022 8CB1      		in r24,0xc
+  42:main.c        **** }
+  74               		.loc 1 42 0
+  75 0024 0895      		ret
+  76               	.LFE3:
+  78               		.section	.text.startup,"ax",@progbits
+  79               	.global	main
+  81               	main:
+  82               	.LFB4:
+  43:main.c        **** 
+  44:main.c        **** int main (void) {
+  83               		.loc 1 44 0
+  84               	/* prologue: function */
+  85               	/* frame size = 0 */
+  86               	/* stack size = 0 */
+  87               	.L__stack_usage = 0
+  45:main.c        ****     DDRB = 0xFF;
+  88               		.loc 1 45 0
+  89 0000 8FEF      		ldi r24,lo8(-1)
+  90 0002 87BB      		out 0x17,r24
+  46:main.c        ****     uint8_t u8Data;
+  47:main.c        **** 
+  48:main.c        ****     // Initialize USART
+  49:main.c        ****     USART_vInit();
+  91               		.loc 1 49 0
+  92 0004 0E94 0000 		call USART_vInit
+  93               	.LVL1:
+  50:main.c        **** 
+  51:main.c        ****     // Send string
+  52:main.c        ****     USART_Transmit(1);
+  94               		.loc 1 52 0
+  95 0008 81E0      		ldi r24,lo8(1)
+  96 000a 90E0      		ldi r25,0
+  97 000c 0E94 0000 		call USART_Transmit
+  98               	.LVL2:
+  99               	.L20:
+  53:main.c        **** 
+  54:main.c        ****     // Repeat indefinitely
+  55:main.c        ****     for (;;) //forever
+  56:main.c        ****     {
+  57:main.c        ****         //Echo received characters
+  58:main.c        ****         u8Data = USART_Receive();
+ 100               		.loc 1 58 0
+ 101 0010 0E94 0000 		call USART_Receive
+ 102               	.LVL3:
+  59:main.c        **** 
+  60:main.c        ****         if(u8Data == 0xAA)
+ 103               		.loc 1 60 0
+ 104 0014 8A3A      		cpi r24,lo8(-86)
+ 105 0016 01F4      		brne .L20
+  61:main.c        ****         {
+  62:main.c        ****             u8Data = USART_Receive();
+ 106               		.loc 1 62 0
+ 107 0018 0E94 0000 		call USART_Receive
+ 108               	.LVL4:
+  63:main.c        ****             PORTB = u8Data;
+ 109               		.loc 1 63 0
+ 110 001c 88BB      		out 0x18,r24
+ 111 001e 00C0      		rjmp .L20
+ 112               	.LFE4:
+ 164               	.Letext0:
+ 165               		.file 2 "/usr/lib/gcc/avr/4.7.2/../../../avr/include/stdint.h"
+DEFINED SYMBOLS
+                            *ABS*:00000000 main.c
+     /tmp/cc7Lwq3c.s:2      *ABS*:0000003e __SP_H__
+     /tmp/cc7Lwq3c.s:3      *ABS*:0000003d __SP_L__
+     /tmp/cc7Lwq3c.s:4      *ABS*:0000003f __SREG__
+     /tmp/cc7Lwq3c.s:5      *ABS*:00000000 __tmp_reg__
+     /tmp/cc7Lwq3c.s:6      *ABS*:00000001 __zero_reg__
+     /tmp/cc7Lwq3c.s:11     .text:00000000 USART_vInit
+     /tmp/cc7Lwq3c.s:35     .text:00000010 USART_Transmit
+     /tmp/cc7Lwq3c.s:61     .text:0000001e USART_Receive
+     /tmp/cc7Lwq3c.s:81     .text.startup:00000000 main
+
+NO UNDEFINED SYMBOLS

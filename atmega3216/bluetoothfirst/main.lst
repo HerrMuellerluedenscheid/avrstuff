@@ -1,0 +1,165 @@
+   1               		.file	"main.c"
+   2               	__SP_H__ = 0x3e
+   3               	__SP_L__ = 0x3d
+   4               	__SREG__ = 0x3f
+   5               	__tmp_reg__ = 0
+   6               	__zero_reg__ = 1
+   7               		.text
+   8               	.Ltext0:
+   9               	.global	USART_vInit
+  11               	USART_vInit:
+  12               	.LFB1:
+  13               		.file 1 "main.c"
+   1:main.c        **** #include <avr/io.h>
+   2:main.c        **** #include <stdio.h>
+   3:main.c        **** 
+   4:main.c        **** void USART_vInit(void){
+  14               		.loc 1 4 0
+  15               	/* prologue: function */
+  16               	/* frame size = 0 */
+  17               	/* stack size = 0 */
+  18               	.L__stack_usage = 0
+   5:main.c        **** 
+   6:main.c        ****     //set baud rate
+   7:main.c        ****     UBRRH = (uint8_t)(51>>8);
+  19               		.loc 1 7 0
+  20 0000 10BC      		out 0x20,__zero_reg__
+   8:main.c        ****     UBRRL = (uint8_t)51;
+  21               		.loc 1 8 0
+  22 0002 83E3      		ldi r24,lo8(51)
+  23 0004 89B9      		out 0x9,r24
+   9:main.c        ****     
+  10:main.c        ****     // Set frame format to 8 data bits, no parity, 1 stop bit
+  11:main.c        ****     UCSRC = (0<<USBS)|(3<<UCSZ0);
+  24               		.loc 1 11 0
+  25 0006 86E0      		ldi r24,lo8(6)
+  26 0008 80BD      		out 0x20,r24
+  12:main.c        **** 
+  13:main.c        ****     // enable receiver and transmitter
+  14:main.c        ****     UCSRB = (1<<RXEN)|(1<<TXEN);
+  27               		.loc 1 14 0
+  28 000a 88E1      		ldi r24,lo8(24)
+  29 000c 8AB9      		out 0xa,r24
+  30 000e 0895      		ret
+  31               	.LFE1:
+  33               	.global	USART_vSendByte
+  35               	USART_vSendByte:
+  36               	.LFB2:
+  15:main.c        **** }
+  16:main.c        **** 
+  17:main.c        **** void USART_vSendByte(uint8_t u8Data){
+  37               		.loc 1 17 0
+  38               	/* prologue: function */
+  39               	/* frame size = 0 */
+  40               	/* stack size = 0 */
+  41               	.L__stack_usage = 0
+  42               	.LVL0:
+  43               	.L3:
+  18:main.c        **** 
+  19:main.c        ****     // wait if a byte is being transmitted
+  20:main.c        ****     while((UCSRA&(1<<UDRE))==0);
+  44               		.loc 1 20 0 discriminator 1
+  45 0010 5D9B      		sbis 0xb,5
+  46 0012 00C0      		rjmp .L3
+  21:main.c        **** 
+  22:main.c        ****     // transmit data
+  23:main.c        ****     UDR = u8Data;
+  47               		.loc 1 23 0
+  48 0014 8CB9      		out 0xc,r24
+  49 0016 0895      		ret
+  50               	.LFE2:
+  52               	.global	USART_vReceiveByte
+  54               	USART_vReceiveByte:
+  55               	.LFB3:
+  24:main.c        **** }
+  25:main.c        **** 
+  26:main.c        **** uint8_t USART_vReceiveByte(){
+  56               		.loc 1 26 0
+  57               	/* prologue: function */
+  58               	/* frame size = 0 */
+  59               	/* stack size = 0 */
+  60               	.L__stack_usage = 0
+  61               	.L9:
+  27:main.c        ****     // Wait until a byte has been received
+  28:main.c        ****     while ((UCSRA&(1<<RXC)) == 0);
+  62               		.loc 1 28 0 discriminator 1
+  63 0018 5F9B      		sbis 0xb,7
+  64 001a 00C0      		rjmp .L9
+  29:main.c        **** 
+  30:main.c        ****     // Return received data
+  31:main.c        ****     return UDR;
+  65               		.loc 1 31 0
+  66 001c 8CB1      		in r24,0xc
+  32:main.c        **** }
+  67               		.loc 1 32 0
+  68 001e 0895      		ret
+  69               	.LFE3:
+  71               		.section	.text.startup,"ax",@progbits
+  72               	.global	main
+  74               	main:
+  75               	.LFB4:
+  33:main.c        **** 
+  34:main.c        **** int main (void) {
+  76               		.loc 1 34 0
+  77               	/* prologue: function */
+  78               	/* frame size = 0 */
+  79               	/* stack size = 0 */
+  80               	.L__stack_usage = 0
+  35:main.c        ****     DDRB = 0xFF;
+  81               		.loc 1 35 0
+  82 0000 8FEF      		ldi r24,lo8(-1)
+  83 0002 87BB      		out 0x17,r24
+  36:main.c        ****     uint8_t u8Data;
+  37:main.c        **** 
+  38:main.c        ****     // Initialize USART
+  39:main.c        ****     USART_vInit();
+  84               		.loc 1 39 0
+  85 0004 0E94 0000 		call USART_vInit
+  86               	.LVL1:
+  40:main.c        **** 
+  41:main.c        ****     // Send string
+  42:main.c        ****     USART_vSendByte('A');
+  87               		.loc 1 42 0
+  88 0008 81E4      		ldi r24,lo8(65)
+  89 000a 0E94 0000 		call USART_vSendByte
+  90               	.LVL2:
+  91               	.L16:
+  43:main.c        **** 
+  44:main.c        ****     // Repeat indefinitely
+  45:main.c        ****     for (;;) //forever
+  46:main.c        ****     {
+  47:main.c        ****         //Echo received characters
+  48:main.c        ****         u8Data = USART_vReceiveByte();
+  92               		.loc 1 48 0
+  93 000e 0E94 0000 		call USART_vReceiveByte
+  94               	.LVL3:
+  49:main.c        **** 
+  50:main.c        ****         if(u8Data == 0xAA)
+  95               		.loc 1 50 0
+  96 0012 8A3A      		cpi r24,lo8(-86)
+  97 0014 01F4      		brne .L16
+  51:main.c        ****         {
+  52:main.c        ****             u8Data = USART_vReceiveByte();
+  98               		.loc 1 52 0
+  99 0016 0E94 0000 		call USART_vReceiveByte
+ 100               	.LVL4:
+  53:main.c        ****             PORTB = u8Data;
+ 101               		.loc 1 53 0
+ 102 001a 88BB      		out 0x18,r24
+ 103 001c 00C0      		rjmp .L16
+ 104               	.LFE4:
+ 156               	.Letext0:
+ 157               		.file 2 "/usr/lib/gcc/avr/4.7.2/../../../avr/include/stdint.h"
+DEFINED SYMBOLS
+                            *ABS*:00000000 main.c
+     /tmp/ccxnSXvK.s:2      *ABS*:0000003e __SP_H__
+     /tmp/ccxnSXvK.s:3      *ABS*:0000003d __SP_L__
+     /tmp/ccxnSXvK.s:4      *ABS*:0000003f __SREG__
+     /tmp/ccxnSXvK.s:5      *ABS*:00000000 __tmp_reg__
+     /tmp/ccxnSXvK.s:6      *ABS*:00000001 __zero_reg__
+     /tmp/ccxnSXvK.s:11     .text:00000000 USART_vInit
+     /tmp/ccxnSXvK.s:35     .text:00000010 USART_vSendByte
+     /tmp/ccxnSXvK.s:54     .text:00000018 USART_vReceiveByte
+     /tmp/ccxnSXvK.s:74     .text.startup:00000000 main
+
+NO UNDEFINED SYMBOLS

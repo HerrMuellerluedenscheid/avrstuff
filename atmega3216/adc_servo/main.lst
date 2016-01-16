@@ -1,0 +1,603 @@
+   1               		.file	"main.c"
+   2               	__SP_H__ = 0x3e
+   3               	__SP_L__ = 0x3d
+   4               	__SREG__ = 0x3f
+   5               	__tmp_reg__ = 0
+   6               	__zero_reg__ = 1
+   7               		.text
+   8               	.Ltext0:
+   9               	.global	setup_PWM
+  11               	setup_PWM:
+  12               	.LFB6:
+  13               		.file 1 "pwm.h"
+   1:pwm.h         **** void setup_PWM(){
+  14               		.loc 1 1 0
+  15               	/* prologue: function */
+  16               	/* frame size = 0 */
+  17               	/* stack size = 0 */
+  18               	.L__stack_usage = 0
+   2:pwm.h         ****     DDRD |= 0xFF;
+  19               		.loc 1 2 0
+  20 0000 81B3      		in r24,0x11
+  21 0002 8FEF      		ldi r24,lo8(-1)
+  22 0004 81BB      		out 0x11,r24
+   3:pwm.h         ****     TCCR1A |= 1<<WGM11 | 1<<COM1A1 | 1<<COM1A0;
+  23               		.loc 1 3 0
+  24 0006 8FB5      		in r24,0x2f
+  25 0008 826C      		ori r24,lo8(-62)
+  26 000a 8FBD      		out 0x2f,r24
+   4:pwm.h         ****     TCCR1B |= 1<<WGM12 | 1<<WGM13 | 1<<CS10;
+  27               		.loc 1 4 0
+  28 000c 8EB5      		in r24,0x2e
+  29 000e 8961      		ori r24,lo8(25)
+  30 0010 8EBD      		out 0x2e,r24
+   5:pwm.h         ****     ICR1 = 19999;
+  31               		.loc 1 5 0
+  32 0012 8FE1      		ldi r24,lo8(31)
+  33 0014 9EE4      		ldi r25,lo8(78)
+  34 0016 97BD      		out 0x26+1,r25
+  35 0018 86BD      		out 0x26,r24
+  36 001a 0895      		ret
+  37               	.LFE6:
+  39               	.global	__floatunsisf
+  40               	.global	__subsf3
+  41               	.global	__mulsf3
+  42               	.global	__addsf3
+  43               	.global	__fixunssfsi
+  44               	.global	set_PWM_range
+  46               	set_PWM_range:
+  47               	.LFB7:
+   6:pwm.h         **** }
+   7:pwm.h         **** 
+   8:pwm.h         **** void set_PWM_range(float factor, float max_left, float max_right){
+  48               		.loc 1 8 0
+  49               	.LVL0:
+  50 001c 4F92      		push r4
+  51               	.LCFI0:
+  52 001e 5F92      		push r5
+  53               	.LCFI1:
+  54 0020 6F92      		push r6
+  55               	.LCFI2:
+  56 0022 7F92      		push r7
+  57               	.LCFI3:
+  58 0024 8F92      		push r8
+  59               	.LCFI4:
+  60 0026 9F92      		push r9
+  61               	.LCFI5:
+  62 0028 AF92      		push r10
+  63               	.LCFI6:
+  64 002a BF92      		push r11
+  65               	.LCFI7:
+  66 002c CF92      		push r12
+  67               	.LCFI8:
+  68 002e DF92      		push r13
+  69               	.LCFI9:
+  70 0030 EF92      		push r14
+  71               	.LCFI10:
+  72 0032 FF92      		push r15
+  73               	.LCFI11:
+  74 0034 0F93      		push r16
+  75               	.LCFI12:
+  76 0036 1F93      		push r17
+  77               	.LCFI13:
+  78 0038 CF93      		push r28
+  79               	.LCFI14:
+  80 003a DF93      		push r29
+  81               	.LCFI15:
+  82 003c 00D0      		rcall .
+  83 003e 00D0      		rcall .
+  84               	.LCFI16:
+  85 0040 CDB7      		in r28,__SP_L__
+  86 0042 DEB7      		in r29,__SP_H__
+  87               	.LCFI17:
+  88               	/* prologue: function */
+  89               	/* frame size = 4 */
+  90               	/* stack size = 20 */
+  91               	.L__stack_usage = 20
+  92 0044 2B01      		movw r4,r22
+  93 0046 3C01      		movw r6,r24
+  94 0048 4901      		movw r8,r18
+  95 004a 5A01      		movw r10,r20
+  96 004c E982      		std Y+1,r14
+  97 004e FA82      		std Y+2,r15
+  98 0050 0B83      		std Y+3,r16
+  99 0052 1C83      		std Y+4,r17
+   9:pwm.h         ****     OCR1A = ICR1 - (max_left+(max_right-max_left)*factor); //18000
+ 100               		.loc 1 9 0
+ 101 0054 66B5      		in r22,0x26
+ 102 0056 77B5      		in r23,0x26+1
+ 103               	.LVL1:
+ 104 0058 80E0      		ldi r24,0
+ 105 005a 90E0      		ldi r25,0
+ 106 005c 0E94 0000 		call __floatunsisf
+ 107               	.LVL2:
+ 108 0060 6B01      		movw r12,r22
+ 109 0062 7C01      		movw r14,r24
+ 110 0064 A501      		movw r20,r10
+ 111 0066 9401      		movw r18,r8
+ 112 0068 6981      		ldd r22,Y+1
+ 113 006a 7A81      		ldd r23,Y+2
+ 114 006c 8B81      		ldd r24,Y+3
+ 115 006e 9C81      		ldd r25,Y+4
+ 116 0070 0E94 0000 		call __subsf3
+ 117               	.LVL3:
+ 118 0074 A301      		movw r20,r6
+ 119 0076 9201      		movw r18,r4
+ 120 0078 0E94 0000 		call __mulsf3
+ 121               	.LVL4:
+ 122 007c 9B01      		movw r18,r22
+ 123 007e AC01      		movw r20,r24
+ 124 0080 C501      		movw r24,r10
+ 125 0082 B401      		movw r22,r8
+ 126 0084 0E94 0000 		call __addsf3
+ 127               	.LVL5:
+ 128 0088 9B01      		movw r18,r22
+ 129 008a AC01      		movw r20,r24
+ 130 008c C701      		movw r24,r14
+ 131 008e B601      		movw r22,r12
+ 132 0090 0E94 0000 		call __subsf3
+ 133               	.LVL6:
+ 134 0094 0E94 0000 		call __fixunssfsi
+ 135               	.LVL7:
+ 136 0098 7BBD      		out 0x2a+1,r23
+ 137 009a 6ABD      		out 0x2a,r22
+ 138               	/* epilogue start */
+  10:pwm.h         **** }
+ 139               		.loc 1 10 0
+ 140 009c 0F90      		pop __tmp_reg__
+ 141 009e 0F90      		pop __tmp_reg__
+ 142 00a0 0F90      		pop __tmp_reg__
+ 143 00a2 0F90      		pop __tmp_reg__
+ 144 00a4 DF91      		pop r29
+ 145 00a6 CF91      		pop r28
+ 146 00a8 1F91      		pop r17
+ 147 00aa 0F91      		pop r16
+ 148 00ac FF90      		pop r15
+ 149 00ae EF90      		pop r14
+ 150               	.LVL8:
+ 151 00b0 DF90      		pop r13
+ 152 00b2 CF90      		pop r12
+ 153 00b4 BF90      		pop r11
+ 154 00b6 AF90      		pop r10
+ 155 00b8 9F90      		pop r9
+ 156 00ba 8F90      		pop r8
+ 157               	.LVL9:
+ 158 00bc 7F90      		pop r7
+ 159 00be 6F90      		pop r6
+ 160 00c0 5F90      		pop r5
+ 161 00c2 4F90      		pop r4
+ 162               	.LVL10:
+ 163 00c4 0895      		ret
+ 164               	.LFE7:
+ 166               	.global	set_PWM_percent
+ 168               	set_PWM_percent:
+ 169               	.LFB8:
+  11:pwm.h         **** 
+  12:pwm.h         **** void set_PWM_percent(float factor){
+ 170               		.loc 1 12 0
+ 171               	.LVL11:
+ 172 00c6 CF92      		push r12
+ 173               	.LCFI18:
+ 174 00c8 DF92      		push r13
+ 175               	.LCFI19:
+ 176 00ca EF92      		push r14
+ 177               	.LCFI20:
+ 178 00cc FF92      		push r15
+ 179               	.LCFI21:
+ 180 00ce 0F93      		push r16
+ 181               	.LCFI22:
+ 182 00d0 1F93      		push r17
+ 183               	.LCFI23:
+ 184 00d2 CF93      		push r28
+ 185               	.LCFI24:
+ 186 00d4 DF93      		push r29
+ 187               	.LCFI25:
+ 188 00d6 00D0      		rcall .
+ 189 00d8 00D0      		rcall .
+ 190               	.LCFI26:
+ 191 00da CDB7      		in r28,__SP_L__
+ 192 00dc DEB7      		in r29,__SP_H__
+ 193               	.LCFI27:
+ 194               	/* prologue: function */
+ 195               	/* frame size = 4 */
+ 196               	/* stack size = 12 */
+ 197               	.L__stack_usage = 12
+ 198 00de 9B01      		movw r18,r22
+ 199 00e0 AC01      		movw r20,r24
+  13:pwm.h         ****     OCR1A = ICR1-ICR1*factor; //18000
+ 200               		.loc 1 13 0
+ 201 00e2 66B5      		in r22,0x26
+ 202 00e4 77B5      		in r23,0x26+1
+ 203               	.LVL12:
+ 204 00e6 06B5      		in r16,0x26
+ 205 00e8 17B5      		in r17,0x26+1
+ 206 00ea 80E0      		ldi r24,0
+ 207 00ec 90E0      		ldi r25,0
+ 208 00ee 2983      		std Y+1,r18
+ 209 00f0 3A83      		std Y+2,r19
+ 210 00f2 4B83      		std Y+3,r20
+ 211 00f4 5C83      		std Y+4,r21
+ 212 00f6 0E94 0000 		call __floatunsisf
+ 213               	.LVL13:
+ 214 00fa 6B01      		movw r12,r22
+ 215 00fc 7C01      		movw r14,r24
+ 216 00fe B801      		movw r22,r16
+ 217 0100 80E0      		ldi r24,0
+ 218 0102 90E0      		ldi r25,0
+ 219 0104 0E94 0000 		call __floatunsisf
+ 220               	.LVL14:
+ 221 0108 2981      		ldd r18,Y+1
+ 222 010a 3A81      		ldd r19,Y+2
+ 223 010c 4B81      		ldd r20,Y+3
+ 224 010e 5C81      		ldd r21,Y+4
+ 225 0110 0E94 0000 		call __mulsf3
+ 226               	.LVL15:
+ 227 0114 9B01      		movw r18,r22
+ 228 0116 AC01      		movw r20,r24
+ 229 0118 C701      		movw r24,r14
+ 230 011a B601      		movw r22,r12
+ 231 011c 0E94 0000 		call __subsf3
+ 232               	.LVL16:
+ 233 0120 0E94 0000 		call __fixunssfsi
+ 234               	.LVL17:
+ 235 0124 7BBD      		out 0x2a+1,r23
+ 236 0126 6ABD      		out 0x2a,r22
+ 237               	/* epilogue start */
+  14:pwm.h         **** }
+ 238               		.loc 1 14 0
+ 239 0128 0F90      		pop __tmp_reg__
+ 240 012a 0F90      		pop __tmp_reg__
+ 241 012c 0F90      		pop __tmp_reg__
+ 242 012e 0F90      		pop __tmp_reg__
+ 243 0130 DF91      		pop r29
+ 244 0132 CF91      		pop r28
+ 245 0134 1F91      		pop r17
+ 246 0136 0F91      		pop r16
+ 247 0138 FF90      		pop r15
+ 248 013a EF90      		pop r14
+ 249 013c DF90      		pop r13
+ 250 013e CF90      		pop r12
+ 251 0140 0895      		ret
+ 252               	.LFE8:
+ 254               	.global	__floatsisf
+ 255               	.global	__divsf3
+ 256               		.section	.text.startup,"ax",@progbits
+ 257               	.global	main
+ 259               	main:
+ 260               	.LFB9:
+ 261               		.file 2 "main.c"
+   1:main.c        **** #include <avr/io.h>
+   2:main.c        **** #include <avr/interrupt.h>
+   3:main.c        **** #include <util/delay.h>
+   4:main.c        **** #include "pwm.h"
+   5:main.c        **** #define F_CPU 1000000L
+   6:main.c        **** 
+   7:main.c        **** int main (void) {
+ 262               		.loc 2 7 0
+ 263               	/* prologue: function */
+ 264               	/* frame size = 0 */
+ 265               	/* stack size = 0 */
+ 266               	.L__stack_usage = 0
+ 267               	.LBB12:
+ 268               	.LBB13:
+   8:main.c        **** 
+   9:main.c        ****     void ADC_Init(void){
+  10:main.c        ****         ADCSRA |= 1<<ADPS2;  // Frequenvorteiler
+ 269               		.loc 2 10 0
+ 270 0000 329A      		sbi 0x6,2
+  11:main.c        ****         // AVCC as reference voltage
+  12:main.c        ****         ADMUX |= (1<<REFS1);
+ 271               		.loc 2 12 0
+ 272 0002 3F9A      		sbi 0x7,7
+  13:main.c        ****         ADCSRA |= 1<<ADIE;
+ 273               		.loc 2 13 0
+ 274 0004 339A      		sbi 0x6,3
+  14:main.c        **** 
+  15:main.c        ****         ADCSRA |= 1<<ADEN;
+ 275               		.loc 2 15 0
+ 276 0006 379A      		sbi 0x6,7
+  16:main.c        ****          
+  17:main.c        ****         // Dummy conversion
+  18:main.c        ****         ADCSRA |= (1<<ADSC);
+ 277               		.loc 2 18 0
+ 278 0008 369A      		sbi 0x6,6
+ 279               	.LBE13:
+ 280               	.LBE12:
+  19:main.c        ****     }
+  20:main.c        ****     // ADC enable
+  21:main.c        ****     ADC_Init();
+  22:main.c        ****     setup_PWM();
+ 281               		.loc 2 22 0
+ 282 000a 0E94 0000 		call setup_PWM
+ 283               	.LVL18:
+ 284               	.LBB14:
+ 285               	.LBB15:
+ 286               		.file 3 "/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h"
+   1:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h **** /* Copyright (c) 2002, Marek Michalkiewicz
+   2:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h ****    Copyright (c) 2004,2005,2007 Joerg Wunsch
+   3:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h ****    Copyright (c) 2007  Florin-Viorel Petrov
+   4:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h ****    All rights reserved.
+   5:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h **** 
+   6:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h ****    Redistribution and use in source and binary forms, with or without
+   7:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h ****    modification, are permitted provided that the following conditions are met:
+   8:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h **** 
+   9:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h ****    * Redistributions of source code must retain the above copyright
+  10:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h ****      notice, this list of conditions and the following disclaimer.
+  11:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h **** 
+  12:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h ****    * Redistributions in binary form must reproduce the above copyright
+  13:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h ****      notice, this list of conditions and the following disclaimer in
+  14:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h ****      the documentation and/or other materials provided with the
+  15:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h ****      distribution.
+  16:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h **** 
+  17:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h ****    * Neither the name of the copyright holders nor the names of
+  18:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h ****      contributors may be used to endorse or promote products derived
+  19:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h ****      from this software without specific prior written permission.
+  20:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h **** 
+  21:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h ****   THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+  22:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h ****   AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+  23:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h ****   IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+  24:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h ****   ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
+  25:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h ****   LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+  26:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h ****   CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+  27:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h ****   SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+  28:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h ****   INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+  29:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h ****   CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+  30:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h ****   ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+  31:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h ****   POSSIBILITY OF SUCH DAMAGE. */
+  32:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h **** 
+  33:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h **** /* $Id: delay.h.in 2251 2011-09-14 08:20:33Z joerg_wunsch $ */
+  34:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h **** 
+  35:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h **** #ifndef _UTIL_DELAY_H_
+  36:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h **** #define _UTIL_DELAY_H_ 1
+  37:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h **** 
+  38:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h **** #ifndef __HAS_DELAY_CYCLES
+  39:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h **** #define __HAS_DELAY_CYCLES 1
+  40:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h **** #endif
+  41:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h **** 
+  42:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h **** #include <inttypes.h>
+  43:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h **** #include <util/delay_basic.h>
+  44:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h **** #include <math.h>
+  45:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h **** 
+  46:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h **** /** \file */
+  47:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h **** /** \defgroup util_delay <util/delay.h>: Convenience functions for busy-wait delay loops
+  48:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h ****     \code
+  49:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h ****     #define F_CPU 1000000UL  // 1 MHz
+  50:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h ****     //#define F_CPU 14.7456E6
+  51:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h ****     #include <util/delay.h>
+  52:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h ****     \endcode
+  53:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h **** 
+  54:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h ****     \note As an alternative method, it is possible to pass the
+  55:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h ****     F_CPU macro down to the compiler from the Makefile.
+  56:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h ****     Obviously, in that case, no \c \#define statement should be
+  57:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h ****     used.
+  58:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h **** 
+  59:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h ****     The functions in this header file are wrappers around the basic
+  60:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h ****     busy-wait functions from <util/delay_basic.h>.  They are meant as
+  61:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h ****     convenience functions where actual time values can be specified
+  62:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h ****     rather than a number of cycles to wait for.  The idea behind is
+  63:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h ****     that compile-time constant expressions will be eliminated by
+  64:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h ****     compiler optimization so floating-point expressions can be used
+  65:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h ****     to calculate the number of delay cycles needed based on the CPU
+  66:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h ****     frequency passed by the macro F_CPU.
+  67:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h **** 
+  68:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h ****     \note In order for these functions to work as intended, compiler
+  69:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h ****     optimizations <em>must</em> be enabled, and the delay time
+  70:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h ****     <em>must</em> be an expression that is a known constant at
+  71:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h ****     compile-time.  If these requirements are not met, the resulting
+  72:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h ****     delay will be much longer (and basically unpredictable), and
+  73:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h ****     applications that otherwise do not use floating-point calculations
+  74:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h ****     will experience severe code bloat by the floating-point library
+  75:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h ****     routines linked into the application.
+  76:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h **** 
+  77:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h ****     The functions available allow the specification of microsecond, and
+  78:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h ****     millisecond delays directly, using the application-supplied macro
+  79:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h ****     F_CPU as the CPU clock frequency (in Hertz).
+  80:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h **** 
+  81:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h **** */
+  82:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h **** 
+  83:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h **** #if !defined(__DOXYGEN__)
+  84:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h **** static inline void _delay_us(double __us) __attribute__((always_inline));
+  85:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h **** static inline void _delay_ms(double __ms) __attribute__((always_inline));
+  86:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h **** #endif
+  87:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h **** 
+  88:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h **** #ifndef F_CPU
+  89:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h **** /* prevent compiler error by supplying a default */
+  90:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h **** # warning "F_CPU not defined for <util/delay.h>"
+  91:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h **** # define F_CPU 1000000UL
+  92:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h **** #endif
+  93:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h **** 
+  94:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h **** #ifndef __OPTIMIZE__
+  95:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h **** # warning "Compiler optimizations disabled; functions from <util/delay.h> won't work as designed"
+  96:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h **** #endif
+  97:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h **** 
+  98:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h **** #if __HAS_DELAY_CYCLES && defined(__OPTIMIZE__) && \
+  99:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h ****   !defined(__DELAY_BACKWARD_COMPATIBLE__) &&	   \
+ 100:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h ****   __STDC_HOSTED__
+ 101:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h **** #  include <math.h>
+ 102:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h **** #endif
+ 103:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h **** 
+ 104:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h **** /**
+ 105:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h ****    \ingroup util_delay
+ 106:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h **** 
+ 107:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h ****    Perform a delay of \c __ms milliseconds, using _delay_loop_2().
+ 108:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h **** 
+ 109:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h ****    The macro F_CPU is supposed to be defined to a
+ 110:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h ****    constant defining the CPU clock frequency (in Hertz).
+ 111:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h **** 
+ 112:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h ****    The maximal possible delay is 262.14 ms / F_CPU in MHz.
+ 113:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h **** 
+ 114:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h ****    When the user request delay which exceed the maximum possible one,
+ 115:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h ****    _delay_ms() provides a decreased resolution functionality. In this
+ 116:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h ****    mode _delay_ms() will work with a resolution of 1/10 ms, providing
+ 117:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h ****    delays up to 6.5535 seconds (independent from CPU frequency).  The
+ 118:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h ****    user will not be informed about decreased resolution.
+ 119:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h **** 
+ 120:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h ****    If the avr-gcc toolchain has __builtin_avr_delay_cycles(unsigned long)
+ 121:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h ****    support, maximal possible delay is 4294967.295 ms/ F_CPU in MHz. For
+ 122:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h ****    values greater than the maximal possible delay, overflows results in
+ 123:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h ****    no delay i.e., 0ms.
+ 124:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h **** 
+ 125:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h ****    Conversion of __us into clock cycles may not always result in integer.
+ 126:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h ****    By default, the clock cycles rounded up to next integer. This ensures that
+ 127:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h ****    the user gets atleast __us microseconds of delay.
+ 128:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h **** 
+ 129:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h ****    Alternatively, user can define __DELAY_ROUND_DOWN__ and __DELAY_ROUND_CLOSEST__
+ 130:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h ****    to round down and round to closest integer.
+ 131:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h **** 
+ 132:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h ****    Note: The new implementation of _delay_ms(double __ms) with 
+ 133:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h ****     __builtin_avr_delay_cycles(unsigned long) support is not backward compatible. 
+ 134:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h ****    User can define __DELAY_BACKWARD_COMPATIBLE__ to get a backward compatible delay.
+ 135:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h ****    Also, the backward compatible
+ 136:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h ****    algorithm will be chosen if the code is compiled in a <em>freestanding
+ 137:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h ****    environment</em> (GCC option \c -ffreestanding), as the math functions
+ 138:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h ****    required for rounding are not available to the compiler then.
+ 139:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h **** 
+ 140:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h ****  */
+ 141:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h **** void
+ 142:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h **** _delay_ms(double __ms)
+ 143:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h **** {
+ 144:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h **** 	uint16_t __ticks;
+ 145:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h **** 	double __tmp ; 
+ 146:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h **** #if __HAS_DELAY_CYCLES && defined(__OPTIMIZE__) && \
+ 147:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h ****   !defined(__DELAY_BACKWARD_COMPATIBLE__) &&	   \
+ 148:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h ****   __STDC_HOSTED__
+ 149:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h **** 	uint32_t __ticks_dc;
+ 150:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h **** 	extern void __builtin_avr_delay_cycles(unsigned long);
+ 151:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h **** 	__tmp = ((F_CPU) / 1e3) * __ms;
+ 152:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h **** 
+ 153:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h **** 	#if defined(__DELAY_ROUND_DOWN__)
+ 154:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h **** 		__ticks_dc = (uint32_t)fabs(__tmp);
+ 155:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h **** 
+ 156:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h **** 	#elif defined(__DELAY_ROUND_CLOSEST__)
+ 157:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h **** 		__ticks_dc = (uint32_t)(fabs(__tmp)+0.5);
+ 158:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h **** 
+ 159:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h **** 	#else
+ 160:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h **** 		//round up by default
+ 161:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h **** 		__ticks_dc = (uint32_t)(ceil(fabs(__tmp)));
+ 162:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h **** 	#endif
+ 163:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h **** 
+ 164:/usr/lib/gcc/avr/4.7.2/../../../avr/include/util/delay.h **** 	__builtin_avr_delay_cycles(__ticks_dc);
+ 287               		.loc 3 164 0
+ 288 000e 2FE3      		ldi r18,lo8(199999)
+ 289 0010 8DE0      		ldi r24,hi8(199999)
+ 290 0012 93E0      		ldi r25,hlo8(199999)
+ 291 0014 2150      		1: subi r18,1
+ 292 0016 8040      		sbci r24,0
+ 293 0018 9040      		sbci r25,0
+ 294 001a 01F4      		brne 1b
+ 295 001c 00C0      		rjmp .
+ 296 001e 0000      		nop
+ 297               	.L6:
+ 298               	.LVL19:
+ 299               	.LBE15:
+ 300               	.LBE14:
+ 301               	.LBB16:
+ 302               	.LBB17:
+ 303 0020 87EA      		ldi r24,lo8(24999)
+ 304 0022 91E6      		ldi r25,hi8(24999)
+ 305 0024 0197      		1: sbiw r24,1
+ 306 0026 01F4      		brne 1b
+ 307 0028 00C0      		rjmp .
+ 308 002a 0000      		nop
+ 309               	.LBE17:
+ 310               	.LBE16:
+  23:main.c        ****     _delay_ms(1000);
+  24:main.c        ****     //set_PWM_percent(1000);
+  25:main.c        ****     
+  26:main.c        ****     //uint8_t poti_value;
+  27:main.c        ****     float poti_value;
+  28:main.c        ****     float frac;
+  29:main.c        ****     while (1) {
+  30:main.c        ****         
+  31:main.c        ****         _delay_ms(100);
+  32:main.c        ****         ADCSRA |= (1<<ADSC);
+ 311               		.loc 2 32 0
+ 312 002c 369A      		sbi 0x6,6
+ 313               	.L5:
+  33:main.c        ****         while (!(ADCSRA & 0x10));
+ 314               		.loc 2 33 0 discriminator 1
+ 315 002e 349B      		sbis 0x6,4
+ 316 0030 00C0      		rjmp .L5
+  34:main.c        ****         
+  35:main.c        ****         poti_value = ADCL;
+ 317               		.loc 2 35 0
+ 318 0032 64B1      		in r22,0x4
+ 319 0034 70E0      		ldi r23,0
+ 320 0036 80E0      		ldi r24,0
+ 321 0038 90E0      		ldi r25,0
+ 322 003a 0E94 0000 		call __floatunsisf
+ 323               	.LVL20:
+ 324 003e 7B01      		movw r14,r22
+ 325 0040 8C01      		movw r16,r24
+ 326               	.LVL21:
+  36:main.c        ****         poti_value += (ADCH<<8);
+ 327               		.loc 2 36 0
+ 328 0042 85B1      		in r24,0x5
+ 329               	.LVL22:
+ 330 0044 D82F      		mov r29,r24
+ 331 0046 90E0      		ldi r25,0
+ 332 0048 C92F      		mov r28,r25
+ 333 004a BE01      		movw r22,r28
+ 334 004c 8827      		clr r24
+ 335 004e 77FD      		sbrc r23,7
+ 336 0050 8095      		com r24
+ 337 0052 982F      		mov r25,r24
+ 338 0054 0E94 0000 		call __floatsisf
+ 339               	.LVL23:
+ 340 0058 9B01      		movw r18,r22
+ 341 005a AC01      		movw r20,r24
+ 342 005c 6E2D      		mov r22,r14
+ 343 005e 7F2D      		mov r23,r15
+ 344 0060 802F      		mov r24,r16
+ 345 0062 912F      		mov r25,r17
+ 346 0064 0E94 0000 		call __addsf3
+ 347               	.LVL24:
+  37:main.c        ****         
+  38:main.c        ****         frac = (float) poti_value/1023.;
+ 348               		.loc 2 38 0
+ 349 0068 20E0      		ldi r18,0
+ 350 006a 30EC      		ldi r19,lo8(-64)
+ 351 006c 4FE7      		ldi r20,lo8(127)
+ 352 006e 54E4      		ldi r21,lo8(68)
+ 353 0070 0E94 0000 		call __divsf3
+ 354               	.LVL25:
+  39:main.c        ****         set_PWM_range(frac, 0., 19999);
+ 355               		.loc 2 39 0
+ 356 0074 E12C      		mov r14,__zero_reg__
+ 357 0076 1EE3      		ldi r17,lo8(62)
+ 358 0078 F12E      		mov r15,r17
+ 359 007a 0CE9      		ldi r16,lo8(-100)
+ 360 007c 16E4      		ldi r17,lo8(70)
+ 361               	.LVL26:
+ 362 007e 20E0      		ldi r18,0
+ 363 0080 30E0      		ldi r19,0
+ 364 0082 A901      		movw r20,r18
+ 365 0084 0E94 0000 		call set_PWM_range
+ 366               	.LVL27:
+  40:main.c        ****         //set_PWM_percent(frac);
+  41:main.c        ****         }
+ 367               		.loc 2 41 0
+ 368 0088 00C0      		rjmp .L6
+ 369               	.LFE9:
+ 581               	.Letext0:
+ 582               		.file 4 "/usr/lib/gcc/avr/4.7.2/../../../avr/include/stdint.h"
+DEFINED SYMBOLS
+                            *ABS*:00000000 main.c
+     /tmp/ccXkMztO.s:2      *ABS*:0000003e __SP_H__
+     /tmp/ccXkMztO.s:3      *ABS*:0000003d __SP_L__
+     /tmp/ccXkMztO.s:4      *ABS*:0000003f __SREG__
+     /tmp/ccXkMztO.s:5      *ABS*:00000000 __tmp_reg__
+     /tmp/ccXkMztO.s:6      *ABS*:00000001 __zero_reg__
+     /tmp/ccXkMztO.s:11     .text:00000000 setup_PWM
+     /tmp/ccXkMztO.s:46     .text:0000001c set_PWM_range
+     /tmp/ccXkMztO.s:168    .text:000000c6 set_PWM_percent
+     /tmp/ccXkMztO.s:259    .text.startup:00000000 main
+
+UNDEFINED SYMBOLS
+__floatunsisf
+__subsf3
+__mulsf3
+__addsf3
+__fixunssfsi
+__floatsisf
+__divsf3

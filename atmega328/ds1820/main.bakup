@@ -1,0 +1,22 @@
+#include <stdlib.h>
+#include <string.h>
+#include <avr/interrupt.h>
+#include <util/delay.h>
+
+#include "ds18b20.h"
+#include "lcd.h"
+
+#define F_CPU 1000000L
+
+int main(void){
+
+
+    double d = 0;
+    sei();
+    for (;;){
+        d = ds18b20_gettemp();
+        _delay_ms(1000);
+    }
+
+    return 0;
+}

@@ -1,0 +1,74 @@
+   1               		.file	"main.c"
+   2               	__SP_H__ = 0x3e
+   3               	__SP_L__ = 0x3d
+   4               	__SREG__ = 0x3f
+   5               	__tmp_reg__ = 0
+   6               	__zero_reg__ = 1
+   7               		.text
+   8               	.Ltext0:
+   9               		.section	.text.startup,"ax",@progbits
+  10               	.global	main
+  12               	main:
+  13               	.LFB6:
+  14               		.file 1 "main.c"
+   1:main.c        **** #include <avr/io.h>
+   2:main.c        **** #include <util/delay.h>
+   3:main.c        **** 
+   4:main.c        **** #define F_CPU 4000000UL
+   5:main.c        **** 
+   6:main.c        **** int main(void)
+   7:main.c        **** {
+  15               		.loc 1 7 0
+  16               	/* prologue: function */
+  17               	/* frame size = 0 */
+  18               	/* stack size = 0 */
+  19               	.L__stack_usage = 0
+   8:main.c        ****     DDRD |= 0xFF;
+  20               		.loc 1 8 0
+  21 0000 81B3      		in r24,0x11
+  22 0002 8FEF      		ldi r24,lo8(-1)
+  23 0004 81BB      		out 0x11,r24
+   9:main.c        ****     // Fuer verschiedene WGM (waveform generation modes) siehe Table47 im 
+  10:main.c        ****     // data sheet.
+  11:main.c        ****     // Fuer diesen Modus muessen WGM13, WGM12 und WGM11 gesetzt werden. 
+  12:main.c        ****     // Diese befinden sich in Register TCCR1B und TCCR1A:
+  13:main.c        ****     TCCR1A |= (1<<WGM10) | (1<<COM1A1) | (1<<COM1B1);
+  24               		.loc 1 13 0
+  25 0006 8FB5      		in r24,0x2f
+  26 0008 816A      		ori r24,lo8(-95)
+  27 000a 8FBD      		out 0x2f,r24
+  14:main.c        ****     TCCR1B |= (1<<WGM12) | (1<<CS12) | (1<<CS10);
+  28               		.loc 1 14 0
+  29 000c 8EB5      		in r24,0x2e
+  30 000e 8D60      		ori r24,lo8(13)
+  31 0010 8EBD      		out 0x2e,r24
+  15:main.c        ****     // Mit den beiden Coms wird inverted mode eingeschaltet, also bei 0 Volt
+  16:main.c        ****     // gehts los.
+  17:main.c        ****     
+  18:main.c        ****     OCR1A = 63;
+  32               		.loc 1 18 0
+  33 0012 8FE3      		ldi r24,lo8(63)
+  34 0014 90E0      		ldi r25,0
+  35 0016 9BBD      		out 0x2a+1,r25
+  36 0018 8ABD      		out 0x2a,r24
+  19:main.c        ****     OCR1B = 127;
+  37               		.loc 1 19 0
+  38 001a 8FE7      		ldi r24,lo8(127)
+  39 001c 90E0      		ldi r25,0
+  40 001e 99BD      		out 0x28+1,r25
+  41 0020 88BD      		out 0x28,r24
+  42               	.L2:
+  43 0022 00C0      		rjmp .L2
+  44               	.LFE6:
+  72               	.Letext0:
+  73               		.file 2 "/usr/lib/gcc/avr/4.7.2/../../../avr/include/stdint.h"
+DEFINED SYMBOLS
+                            *ABS*:00000000 main.c
+     /tmp/cczWx4op.s:2      *ABS*:0000003e __SP_H__
+     /tmp/cczWx4op.s:3      *ABS*:0000003d __SP_L__
+     /tmp/cczWx4op.s:4      *ABS*:0000003f __SREG__
+     /tmp/cczWx4op.s:5      *ABS*:00000000 __tmp_reg__
+     /tmp/cczWx4op.s:6      *ABS*:00000001 __zero_reg__
+     /tmp/cczWx4op.s:12     .text.startup:00000000 main
+
+NO UNDEFINED SYMBOLS
