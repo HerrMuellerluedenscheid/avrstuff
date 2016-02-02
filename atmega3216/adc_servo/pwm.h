@@ -1,5 +1,6 @@
 void setup_PWM(){
-    DDRD |= 0xFF;
+    //DDRD |= 0xFF;
+    DDRD |= (1<<PIND5);
     TCCR1A |= 1<<WGM11 | 1<<COM1A1 | 1<<COM1A0;
     TCCR1B |= 1<<WGM12 | 1<<WGM13 | 1<<CS10;
     ICR1 = 19999;
