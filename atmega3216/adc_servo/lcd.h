@@ -52,7 +52,18 @@ void lcd_write_character_4d(uint8_t);
 void lcd_write_string_4d(uint8_t *);
 void lcd_init_4d(void);
 void lcd_write_hold_clear(uint8_t *, float);
-
+//int float_to_str(n, res, afterpoint);
+//
+//
+//int float_to_str(float n){
+//    return int(n)
+//}
+void lcd_print(uint8_t string[]){
+    lcd_write_instructions_4d(lcd_Clear);
+    lcd_write_instructions_4d(lcd_SetCursor | lcd_LineOne);
+    _delay_ms(4);
+    lcd_write_string_4d(string);
+}
 
 void lcd_init_4d(void){
     _delay_ms(100);  // powerup delay
